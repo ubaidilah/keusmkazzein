@@ -46,6 +46,16 @@
               <input type="number" class="form-control" autocomplete="off"  placeholder="Total Tagihan" name="total" >
             </div>
           </div>
+          <div class="form-group row">
+          	<div class="col-sm-6 mb-3 mb-sm-0" >
+              <label for="santri">Jenis Penagihan</label>
+             <select name="jenis_tagihan" id="tagihan" class="form-control select2">
+                <?php foreach ($jenis_tagihan as $jt) : ?>
+                  <option value="<?= $jt['id'];?>"><?= $jt['nama'];?></option>
+                <?php endforeach; ?>
+			 </select>
+          	</div>
+          </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
           </form>
         </div>
@@ -75,7 +85,7 @@
               <td><?= $tag['nama_tagihan']; ?></td>
               <td><?= 'Rp. '.number_format($tag['total'],false,false,'.'); ?></td>
               <td>
-                  <a href="<?= site_url('tagihan/billing/'.$tag['id'])?>" class="badge badge-success">Buat Tagihan</a>
+                  <a href="<?= site_url('tagihan/billing/'.$tag['r_jenis_tagihan_id'].'/'.$tag['id'])?>" class="badge badge-success">Buat Tagihan</a>
                   <a href="#" class="badge badge-danger" data-toggle="modal" data-target="#modal_hapus<?php echo $tag['id'];?>">Delete</a>
               </td>
             </tr>
@@ -92,6 +102,36 @@
 <!-- /.container-fluid -->
 </div>
 <!-- End of Main Content -->
+
+<?php
+        foreach($tagihan as $t):
+            $id_t=$t['id'];
+            $nama_t=$t['nama_tagihan'];
+        ?>
+     <!-- ============ MODAL HAPUS BARANG =============== -->
+        <div class="modal fade" id="modal_hapus<?php echo $id_t;?>" tabindex="-1" role="dialog" aria-labelledby="largeModal" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+
+            </div>
+            <form class="form-horizontal" method="post" action="<?= site_url('tagihan/delete_tagihan')?>">
+                <div class="modal-body">
+                    <p>Anda yakin mau menghapus <b><?php echo $nama_t; ?></b></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="id" value="<?php echo $id_t;?>">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Tutup</button>
+                    <button class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+            </div>
+            </div>
+        </div>
+    <?php endforeach;?>
+    <!--END MODAL HAPUS BARANG-->
+
 <script>
 function toggler(divId) {
     $("#" + divId).toggle();

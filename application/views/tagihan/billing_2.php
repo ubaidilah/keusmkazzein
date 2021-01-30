@@ -38,7 +38,7 @@
                 <div class="card-body" onclick="toggler('tambah');">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">Buat Billing By Siswa  </div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">Buat Billing By Siswa</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -65,12 +65,6 @@
               </select>
               <input type="hidden" name="kode" value="1">
             </div>
-            <?php if ($jenis == 2 ) { ?>
-            <div class="col-sm-6 mb-3 mb-sm-0" >
-            <label for="total">Total Tagihan</label>
-            <input type="number" class="form-control" autocomplete="off" placeholder="Masukkan Total Tagihan" name="total" >
-          </div>
-          <?php } ?>
           </div>
             <button type="submit" class="btn btn-primary" >Submit</button>
           </form>
@@ -94,12 +88,6 @@
             </select>
             <input type="hidden" name="kode" value="2">
           </div>
-          <?php if ($jenis == 2 ) { ?>
-            <div class="col-sm-6 mb-3 mb-sm-0" >
-            <label for="total">Total Tagihan</label>
-            <input type="number" class="form-control" autocomplete="off" placeholder="Masukkan Total Tagihan" name="total" >
-          </div>
-          <?php } ?>
         </div>
           <button type="submit" class="btn btn-primary" >Submit</button>
         </form>

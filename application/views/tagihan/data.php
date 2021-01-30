@@ -64,7 +64,10 @@
               <td><?= $tag['nama_kelas']; ?></td>
               <td><?= $tag['nama_jurusan']; ?></td>
               <td><?= $tag['nama_tagihan']; ?></td>
+              <?php if ($tag['jenis'] == 1 ) {?>
               <td><?= 'Rp. '.number_format($tag['total_tagihan'],false,false,'.'); ?></td>
+              <?php } else { ?>
+              <td><?= 'Rp. '.number_format($tag['total'],false,false,'.'); ?></td><?php } ?>
               <td><?php if ($tag['is_status'] == 1) { ?>
                 <span class="badge badge-success">Lunas</span>
               <?php }else {?> <span class="badge badge-danger">Belum Bayar</span> <?php } ?>

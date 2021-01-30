@@ -44,7 +44,7 @@
               <label for="santri">Nama Santri</label>
               <select name="santri" id="santri" class="form-control select2">
                 <option value="">Pilih Santri</option>
-                <?php foreach ($tagihan as $t) : ?>
+                <?php foreach ($santri as $t) : ?>
                   <option value="<?= $t['id'];?>"><?= $t['nama_santri'];?></option>
                 <?php endforeach; ?>
               </select>

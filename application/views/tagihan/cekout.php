@@ -38,8 +38,13 @@
             <div class="form-group row">
               <div class="col-sm-6 mb-3 mb-sm-0" >
               <label for="total">Total Tagihan</label>
+              <?php if ($cekout['jenis'] == 1) { ?>
               <input type="text" class="form-control"  readonly value="<?= 'Rp. '.number_format($cekout['total_tagihan'],false,false,'.'); ?>"  >
               <input type="hidden" class="form-control" id="total" readonly value="<?= $cekout['total_tagihan']; ?>" name="total" >
+              <?php } else { ?>
+              <input type="text" class="form-control"  readonly value="<?= 'Rp. '.number_format($cekout['total'],false,false,'.'); ?>"  >
+              <input type="hidden" class="form-control" id="total" readonly value="<?= $cekout['total']; ?>" name="total" >
+              <?php } ?>
             </div>
 
             <div class="col-sm-6 mb-3 mb-sm-0" >

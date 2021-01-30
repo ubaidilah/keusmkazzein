@@ -15,7 +15,7 @@ class Tagihan_model extends CI_Model
 
     public function get_data_billing()
   {
-    $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan, u.name')
+    $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,t.r_jenis_tagihan_id as jenis,k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan, u.name')
             ->from('invoice_tagihan in')
             ->join('tagihan t','t.id = in.tagihan_id')
             ->join('santri s','s.id = in.santri_id')
@@ -29,7 +29,7 @@ class Tagihan_model extends CI_Model
 
    public function get_data_billing_santri()
   {
-    $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan')
+    $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,t.r_jenis_tagihan_id as jenis, k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan')
             ->from('invoice_tagihan in')
             ->join('tagihan t','t.id = in.tagihan_id')
             ->join('santri s','s.id = in.santri_id')
@@ -57,15 +57,15 @@ class Tagihan_model extends CI_Model
   }
 
 
-  public function get_billing_by_id($data, $tagihan)
+  public function get_billing_by_id($santri, $tagihan)
   {
-  $result =  $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan')
+  $result =  $this->db->select('in.*, s.nama_santri as nama_santri, t.nama_tagihan, t.total as total_tagihan,t.r_jenis_tagihan_id as jenis, k.nama_kelas as nama_kelas, j.nama_jurusan as nama_jurusan')
             ->from('invoice_tagihan in')
             ->join('tagihan t','t.id = in.tagihan_id')
             ->join('santri s','s.id = in.santri_id')
             ->join('kelas k','k.id_kelas = s.kd_kelas')
             ->join('jurusan j','j.id_jurusan = s.kd_jurusan')
-            ->where('in.id',$data)
+            ->where('in.santri_id',$santri)
             ->where('in.tagihan_id',$tagihan);
         return $this->db->get()->row_array();
   }
@@ -90,15 +90,15 @@ class Tagihan_model extends CI_Model
         return $id;
     }
 
-    public function update($data, $id)
-    {
-        $this->db->update('santri', $data, array('id'=>$id));
-        return $id;
-    }
+    // public function update($data, $id)
+    // {
+    //     $this->db->update('santri', $data, array('id'=>$id));
+    //     return $id;
+    // }
 
     public function delete($id)
     {
-        $this->db->delete('jajan', array('id'=>$id));
+        $this->db->delete('tagihan', array('id'=>$id));
         // $this->db->delete('user', array('h_pengajuan_vicon_id'=>$id));
         return $id;
     }

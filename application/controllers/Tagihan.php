@@ -19,12 +19,15 @@ class Tagihan extends CI_Controller
     $data['title'] = 'Manajemen Tagihan';
     $data['user'] = $this->db->get_where('user',['email' =>
     $this->session->userdata('email')])->row_array();
-    // $data['santri'] = $this->db->get('santri')->result_array();
+    $data['jenis_tagihan'] = $this->db->get('r_jenis_tagihan')->result_array();
     $data['tagihan'] = $this->tagihan->get_tagihan();
     $data['santri'] = $this->santri->get_santri();
+    $jenis_tagihan = $this->input->post('jenis_tagihan');
 
     $this->form_validation->set_rules('tagihan', 'Nama Tagihan', 'required|trim');
+    if ($jenis_tagihan == 1) {
     $this->form_validation->set_rules('total', 'Total Uang Tagihan', 'required|trim');
+    }
 
     if ($this->form_validation->run() == false) {
       $this->load->view('templates/header',$data);
@@ -36,6 +39,7 @@ class Tagihan extends CI_Controller
       $data = [
             'nama_tagihan' => $this->input->post('tagihan'),
             'total' => $this->input->post('total'),
+            'r_jenis_tagihan_id' => $jenis_tagihan,
       ];
       $tagihan = $this->db->insert('tagihan', $data);
       if (!empty($tagihan)) {
@@ -54,10 +58,10 @@ class Tagihan extends CI_Controller
     $data['title'] = 'Transaksi Tagihan';
     $data['user'] = $this->db->get_where('user',['email' =>
     $this->session->userdata('email')])->row_array();
-    // $data['santri'] = $this->santri->get_santri();
+    $data['santri'] = $this->santri->get_santri();
     // $data['santri'] = $this->tabungan->get_tabungan();
     $data['jenis_tagihan'] = $this->tagihan->get_tagihan();
-    $data['tagihan'] = $this->tagihan->get_data_billing();
+    // $data['tagihan'] = $this->tagihan->get_data_billing();
 
       $this->load->view('templates/header',$data);
       $this->load->view('templates/sidebar',$data);
@@ -90,12 +94,12 @@ class Tagihan extends CI_Controller
         $this->load->view('templates/footer',$data);
     } else {
       $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-        Santri Tidak Menitipkan Uang Jajan ! </div>');
+        DATA TAGIHAN TIDAK DITEMUKAN ! <br> PASTIKAN NAMA DAN JENIS TAGIHAN SESUAI </div>');
       redirect('tagihan/transaksi');
     }
   }
 
-  public function billing($id)
+  public function billing($jenis, $id)
   {
     $data['title'] = 'Buat Data Tagihan';
     $data['user'] = $this->db->get_where('user',['email' =>
@@ -103,6 +107,7 @@ class Tagihan extends CI_Controller
     $data['kelas'] = $this->db->get('kelas')->result_array();
     $data['tagihan'] = $this->tagihan->get_tagihan();
     $data['santri'] = $this->santri->get_santri();
+    $data['jenis'] = $jenis;
    
     $this->form_validation->set_rules('santri', 'Santri', 'required');
     // $this->form_validation->set_rules('santri', 'Santri', 'required');
@@ -117,34 +122,55 @@ class Tagihan extends CI_Controller
       $santri_list = $this->input->post('santri');
       $kel = $this->input->post('kelas');
       $kode = $this->input->post('kode');
+      $total = $this->input->post('total');
       if ($kode == 1) {
         $kelas_l = $this->db->get_where('santri',['kd_kelas' => $kel])->result_array();
         foreach ($kelas_l as $kelas_na) {
-          $result = [
-          'santri_id' =>  $kelas_na['id'],
-          'tagihan_id' =>  $id,
-          ];
+
+
+          if ($jenis == 1) {
+            $result = [
+            'santri_id' =>  $kelas_na['id'],
+            'tagihan_id' =>  $id,
+            ];
+          }elseif($jenis == 2 ){
+            $result = [
+            'santri_id' =>  $kelas_na['id'],
+            'tagihan_id' =>  $id,
+            'total' =>  $total,
+            ];
+          }
+          
 
           $this->db->insert('invoice_tagihan', $result);
 
           $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
            Billing Berhasil dibuat! </div>');
-          redirect('tagihan/invoice');
+          redirect('tagihan/billing/'.$jenis.'/'.$id);
         }
 
       } else {
         foreach ($santri_list as $santri_name) {
-          $result2 = [
-          'santri_id' =>  $santri_name,
-          'tagihan_id' =>  $id,
-          ];
+          if ($jenis == 1) {
+            $result2 = [
+            'santri_id' =>  $santri_name,
+            'tagihan_id' =>  $id,
+            ];
+          }elseif($jenis == 2 ){
+            $result2 = [
+            'santri_id' =>  $santri_name,
+            'tagihan_id' =>  $id,
+            'total' =>  $total,
+            ];
+          }
+
           $this->db->insert('invoice_tagihan', $result2);
 
-          $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-           Billing Berhasil dibuat! </div>');
-          redirect('tagihan/invoice');
+         
         }
-
+         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+           Billing Berhasil dibuat! </div>');
+          redirect('tagihan/billing/'.$jenis.'/'.$id);
       }
       
     }
@@ -208,55 +234,19 @@ class Tagihan extends CI_Controller
         echo json_encode($data);
     }
 
-  public function edit($id)
-  {
-    $data['title'] = 'Edit Tabungan Santri';
-    $data['user'] = $this->db->get_where('user',['email' =>
-    $this->session->userdata('email')])->row_array();
-    $data['tabungan'] = $this->tabungan->get_tabungan_by_id($id);
-    $data['santri'] = $this->santri->get_santri($id);
 
-
-    $this->form_validation->set_rules('santri', 'Nama Santri', 'required');
-    $this->form_validation->set_rules('debit', 'Saldo Akhir', 'required');
-
-    if ($this->form_validation->run() == false) {
-      $this->load->view('templates/header',$data);
-      $this->load->view('templates/sidebar',$data);
-      $this->load->view('templates/topbar',$data);
-      $this->load->view('tabungan/edit',$data);
-      $this->load->view('templates/footer',$data);
-    } else {
-      $data = [
-            'id_santri' => $this->input->post('santri'),
-            'debit' => $this->input->post('debit'),
-            'date' => date('Y-m-d')
-      ];
-
-      $tabungan = $this->tabungan->update($data,$id);
-      if (!empty($tabungan)) {
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-          Edit Tabungan Berhasil! </div>');
-      } else {
-        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-          Edit Tabungan Gagal! </div>');
-      }
-      redirect('tabungan');
-    }
-  }
-
-   public function delete()
+   public function delete_tagihan()
   {
     $id=$this->input->post('id');
-    $tabungan = $this->tabungan->delete($id);
+    $tabungan = $this->tagihan->delete($id);
     if (!empty($tabungan)) {
       $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-       Tabungan Berhasil dihapus! </div>');
+       Tagihan Berhasil dihapus! </div>');
     } else {
       $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-       Tabungan Gagal dihapus! </div>');
+       Tagihan Gagal dihapus! </div>');
     }
-    redirect('jajan');
+    redirect('tagihan');
   }
 
 }
